@@ -21,3 +21,5 @@ block content
           if errors && errors.confirmPassword
             div.help-block.with-errors=errors.confirmPassword.msg
         button.btn.btn-default.full-width(type='submit')=__('btn.sign_up')
+      hr
+      a.btn.btn-primary.full-width(type='submit' href='/login')=__('btn.login')
