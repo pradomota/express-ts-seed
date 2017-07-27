@@ -50,16 +50,16 @@ exports.postLogin = (req: Request, res: Response, next: NextFunction) => {
 
 exports.getTwoFactor = (req: Request, res: Response) => {
   let options: any = {};
-  options.title = i18n.__('two_factor');
+  options.title = i18n.__('two_factor.title');
 
   res.render('user/two-factor', options);
 };
 
 exports.postTwoFactor = (req: Request, res: Response, next: NextFunction) => {
   let options: any = {};
-  options.title = i18n.__('two_factor');
+  options.title = i18n.__('two_factor.title');
 
-  req.assert('code', i18n.__('validation.password.empty')).notEmpty();
+  req.assert('code', i18n.__('validation.code.empty')).notEmpty();
 
   req.getValidationResult().then((result: Result) => {
     if (result.isEmpty()) {
@@ -149,3 +149,95 @@ exports.getProfile = (req: Request, res: Response) => {
   res.render('user/profile', options);
 };
 
+exports.postConfigureTwoFactor = (req: Request, res: Response, next: NextFunction) => {
+  var options: any = {};
+  options.title = i18n.__('profile');
+  options.user = req.user;
+
+  req.assert('password', i18n.__('validation.password.empty')).notEmpty();
+  req.getValidationResult().then((result: Result) => {
+
+    if (result.isEmpty()) {
+
+      options.user.checkPassword(req.body.password, (err: Error, isMatch: boolean) => {
+        if (err) { return next(err); }
+        if (isMatch) {
+          let totpUri: string = options.user.configureTOTP();
+          options.totpQR = `https://chart.googleapis.com/chart?chs=166x166&chld=L|0&cht=qr&chl=${encodeURIComponent(totpUri)}`;
+          options.user.save((err: Error) => {
+            if (err) { return next(err); }
+            res.render('user/profile', options);
+          });
+        } else {
+          options.errors = { password: { param: 'password', msg: i18n.__('validation.password.wrong') } };
+          res.render('user/profile', options);
+        }
+      });
+    } else {
+      options.errors = result.mapped();
+      res.render('user/profile', options);
+    }
+  });
+};
+
+exports.postActivateTwoFactor = (req: Request, res: Response, next: NextFunction) => {
+  var options: any = {};
+  options.title = 'Profile';
+  options.user = req.user;
+  options.totpQR = req.body.totpQR;
+
+  req.assert('code', i18n.__('validation.code.empty')).notEmpty();
+  req.getValidationResult().then((result: Result) => {
+    if (result.isEmpty()) {
+
+      passport.authenticate('local-totp', (err: Error, user: UserModel, info: any) => {
+        if (err) { return next(err); }
+        if (!user) {
+          options.errors = { code: { param: 'code', msg: info.message } };
+          res.render('user/profile', options);
+        } else {
+          options.user.totp.active = true;
+          req.session.twoFactor = true;
+          options.user.save((err: Error) => {
+            if (err) { return next(err); }
+            res.redirect('/profile');
+          });
+        }
+      })(req, res, next);
+    } else {
+      options.errors = result.mapped();
+      res.render('user/profile', options);
+    }
+  });
+};
+
+exports.postDisableTwoFactor = (req: Request, res: Response, next: NextFunction) => {
+  var options: any = {};
+  options.title = 'Profile';
+  options.user = req.user;
+
+  req.assert('password', i18n.__('validation.password.empty')).notEmpty();
+  req.getValidationResult().then((result: Result) => {
+
+    if (result.isEmpty()) {
+
+      options.user.checkPassword(req.body.password, (err: Error, isMatch: boolean) => {
+        if (err) { return next(err); }
+        if (isMatch) {
+          options.user.disableTOTP();
+          options.user.save((err: Error) => {
+            if (err) { return next(err); }
+            req.session.twoFactor = false;
+            res.redirect('/profile');
+          });
+        } else {
+          options.errors = { password: { param: 'password', msg: i18n.__('validation.password.wrong') } };
+          res.render('user/profile', options);
+        }
+      });
+    } else {
+      options.errors = result.mapped();
+      res.render('user/profile', options);
+    }
+  });
+};

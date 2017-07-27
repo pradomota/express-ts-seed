@@ -46,7 +46,7 @@ export function setup(passport: PassportStatic): void {
       if (req.user && req.user.checkTOTP(req.body.code)) {
         done(null, req.user);
       } else {
-        done(null, false, { message: i18n.__('validation.code') });
+        done(null, false, { message: i18n.__('validation.code.wrong') });
       }
     })
   );
@@ -55,7 +55,20 @@ export function setup(passport: PassportStatic): void {
 
 export let isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
   if (req.isAuthenticated()) {
-    return next();
+    if (!req.user.totp.active || req.session.twoFactor) {
+      return next();
+    } else {
+      return res.redirect('/two-factor');
+    }
+  }
+  return res.redirect('/login');
+};
+
+export let isTwoFactorNeeded = (req: Request, res: Response, next: NextFunction) => {
+  if (req.isAuthenticated()) {
+    if (req.user.totp.active && !req.session.twoFactor) {
+      return next();
+    }
   }
   return res.redirect('/login');
 };
