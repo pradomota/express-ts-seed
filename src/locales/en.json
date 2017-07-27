@@ -11,7 +11,8 @@
     },
     "btn": {
         "sign_up": "Sign up",
-        "login": "Login"
+        "login": "Login",
+        "logout": "Logout"
     },
     "validation": {
         "name": {

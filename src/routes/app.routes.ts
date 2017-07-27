@@ -12,6 +12,7 @@ router.get('/', passportConfig.isAuthenticated, info.getHome);
 // User
 router.get('/login', passportConfig.isNotLogged, user.getLogin);
 router.post('/login', passportConfig.isNotLogged, user.postLogin);
+router.get('/logout', passportConfig.isAuthenticated, user.getLogout);
 router.get('/sign-up', passportConfig.isNotLogged, user.getSignup);
 router.post('/sign-up', passportConfig.isNotLogged, user.postSignup);
 

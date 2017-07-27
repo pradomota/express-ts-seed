@@ -1,9 +1,6 @@
-extends ../layout
+extends ../internal-layout
 
-block content
-  .container
-    .row
-      .col-xs-12  
-        .panel
-          .panel-body
-            p=__('intro')
+block internal-content
+  .panel
+    .panel-body
+      p=__('intro')
