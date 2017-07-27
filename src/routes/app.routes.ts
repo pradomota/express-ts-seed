@@ -15,5 +15,7 @@ router.post('/login', passportConfig.isNotLogged, user.postLogin);
 router.get('/logout', passportConfig.isAuthenticated, user.getLogout);
 router.get('/sign-up', passportConfig.isNotLogged, user.getSignup);
 router.post('/sign-up', passportConfig.isNotLogged, user.postSignup);
+router.get('/profile', passportConfig.isAuthenticated, user.getProfile);
+
 
 module.exports = router;
