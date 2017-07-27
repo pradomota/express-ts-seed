@@ -7,3 +7,37 @@ block internal-content
       ul
         li #{__('placeholder.name')}: #{user.name}
         li #{__('placeholder.email')}: #{user.email}
+  .panel.panel-default
+    .panel-heading=__('security')
+    .panel-body
+      p=__mf('two_factor.status_info', user.totp.active ? __('status.enabled') : __('status.disabled'))
+      p=__('two_factor.info')
+      p=__mf('two_factor.warning',user.email)
+      form(method='post' action=(user.totp.active ? '/profile/disable-two-factor' : '/profile/configure-two-factor') class='form-inline')
+        .form-group(class=(errors && errors.password ? 'has-error' : ''))
+          input#password.form-control(type='password', placeholder=__('placeholder.password') name='password' required='true')
+        button.btn.btn-primary(type='submit') #{user.totp.active ? __('btn.deactivate') : __('btn.activate') } 
+        if errors && errors.password
+          .has-error
+            .help-block.with-errors=errors.password.msg
+      if totpQR
+        hr
+        p=__('two_factor.configure')
+        ul
+          li=__('two_factor.step.1')
+          li=__('two_factor.step.2')
+            ul
+              li #[strong Service name]: #{process.env.TOTP_ISSUER}
+              li #[strong Account]: #{user.email}
+              li #[strong Secret key]: #{user.totp.secret}
+        img(src=totpQR)
+        hr
+        p=__('two_factor.step.3')
+        form(method='post' action='/profile/activate-two-factor' class='form-inline')
+          input(type='hidden' name='totpQR' value=totpQR)
+          .form-group(class=(errors && errors.code ? 'has-error' : ''))
+            input#code.form-control(type='code', placeholder=__('placeholder.code') name='code' required='true')
+          button.btn.btn-primary(type='submit')=__('btn.verify')
+          if errors && errors.code
+            .has-error
+              .help-block.with-errors=errors.code.msg
