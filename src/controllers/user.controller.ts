@@ -48,6 +48,13 @@ exports.postLogin = (req: Request, res: Response, next: NextFunction) => {
 
 };
 
+exports.getTwoFactor = (req: Request, res: Response) => {
+  let options: any = {};
+  options.title = i18n.__('two_factor');
+
+  res.render('user/two-factor', options);
+};
+
 exports.getSignup = (req: Request, res: Response) => {
   let options: any = {};
   options.title = i18n.__('signup');

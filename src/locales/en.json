@@ -4,16 +4,19 @@
     "signup": "Create Account",
     "login": "Login",
     "profile": "Profile",
+    "two_factor": "Two Factor",
     "placeholder": {
         "name": "Name",
         "email": "Email",
         "password": "Password",
-        "confirm_password": "Confirm password"
+        "confirm_password": "Confirm password",
+        "code": "Code"
     },
     "btn": {
         "sign_up": "Sign up",
         "login": "Login",
-        "logout": "Logout"
+        "logout": "Logout",
+        "verify": "Verify"
     },
     "validation": {
         "name": {
