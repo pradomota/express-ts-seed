@@ -55,6 +55,32 @@ exports.getTwoFactor = (req: Request, res: Response) => {
   res.render('user/two-factor', options);
 };
 
+exports.postTwoFactor = (req: Request, res: Response, next: NextFunction) => {
+  let options: any = {};
+  options.title = i18n.__('two_factor');
+
+  req.assert('code', i18n.__('validation.password.empty')).notEmpty();
+
+  req.getValidationResult().then((result: Result) => {
+    if (result.isEmpty()) {
+      passport.authenticate('local-totp', (err: Error, user: UserModel, info: any) => {
+        if (err) { return next(err); }
+        if (!user) {
+          options.errors = { code: { param: 'code', msg: info.message } };
+          res.render('user/two-factor', options);
+        } else {
+          req.session.twoFactor = true;
+          res.redirect(req.session.returnTo || '/');
+        }
+      })(req, res, next);
+    } else {
+      options.errors = result.mapped();
+      res.render('user/two-factor', options);
+    }
+  });
+
+};
+
 exports.getSignup = (req: Request, res: Response) => {
   let options: any = {};
   options.title = i18n.__('signup');

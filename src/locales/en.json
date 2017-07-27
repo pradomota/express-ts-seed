@@ -31,6 +31,7 @@
             "match": "Passwords do not match",
             "empty": "Password must not be empty"
         },
-        "auth": "Invalid email or password."
+        "auth": "Invalid email or password.",
+        "code": "Invalid code"
     }
 }

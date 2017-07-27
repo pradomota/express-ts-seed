@@ -5,6 +5,7 @@ import { Request, Response, NextFunction } from 'express';
 import * as i18n from 'i18n';
 
 const LocalStrategy = passportLocal.Strategy;
+const CustomStrategy = require('passport-custom').Strategy;
 
 export function setup(passport: PassportStatic): void {
 
@@ -37,6 +38,16 @@ export function setup(passport: PassportStatic): void {
           return done(null, false, { message: i18n.__('validation.auth') });
         });
       });
+    })
+  );
+
+  passport.use('local-totp', new CustomStrategy(
+    function (req: Request, done: any) {
+      if (req.user && req.user.checkTOTP(req.body.code)) {
+        done(null, req.user);
+      } else {
+        done(null, false, { message: i18n.__('validation.code') });
+      }
     })
   );
 
