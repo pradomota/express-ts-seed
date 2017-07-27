@@ -2,12 +2,50 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { Result } from 'express-validator';
 import { default as User, UserModel } from '../models/user.model';
 import * as i18n from 'i18n';
+import * as passport from 'passport';
 
 exports.getLogin = (req: Request, res: Response) => {
   let options: any = {};
   options.title = i18n.__('login');
 
   res.render('user/login', options);
+};
+
+exports.postLogin = (req: Request, res: Response, next: NextFunction) => {
+  let options: any = {};
+  options.title = i18n.__('login');
+
+  req.assert('email', i18n.__('validation.email.email')).isEmail();
+  req.assert('password', i18n.__('validation.password.empty')).notEmpty();
+
+  req.sanitize('email').trim();
+
+  req.getValidationResult().then((result: Result) => {
+    const user = new User({
+      email: req.body.email
+    });
+    options.user = user;
+
+    if (result.isEmpty()) {
+      passport.authenticate('local-login', (err: Error, user: UserModel, info: any) => {
+        if (err) { return next(err); }
+        if (!user) {
+          options.errors = { auth: { param: 'auth', msg: info.message}};
+          res.render('user/login', options);
+        } else {
+          req.logIn(user, (err) => {
+            if (err) { return next(err); }
+            res.redirect(req.session.returnTo || '/');
+          });
+        }
+      })(req, res, next);
+
+    } else {
+      options.errors = result.mapped();
+      res.render('user/login', options);
+    }
+  });
+
 };
 
 exports.getSignup = (req: Request, res: Response) => {
@@ -48,7 +86,10 @@ exports.postSignup = (req: Request, res: Response, next: NextFunction) => {
         } else {
           user.save((err: Error) => {
             if (err) { return next(err); }
-            res.redirect('/');
+            req.logIn(user, (err: Error) => {
+              if (err) { return next(err); }
+              res.redirect('/');
+              });
           });
         }
       });

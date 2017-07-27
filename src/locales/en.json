@@ -23,7 +23,9 @@
         },
         "password": {
             "len": "Password must be at least 8 characters long",
-            "match": "Passwords do not match"
-        }
+            "match": "Passwords do not match",
+            "empty": "Password must not be empty"
+        },
+        "auth": "Invalid email or password."
     }
 }

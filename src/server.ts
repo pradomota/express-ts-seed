@@ -7,6 +7,10 @@ import * as dotenv from 'dotenv';
 import * as i18n from 'i18n';
 import * as expressValidator from 'express-validator';
 import * as mongoose from 'mongoose';
+import * as mongo from 'connect-mongo';
+import * as session from 'express-session';
+import * as passport from 'passport';
+import * as passportConfig from './config/passport.config';
 
 dotenv.config();
 i18n.configure({
@@ -23,6 +27,9 @@ mongoose.connection.on('error', () => {
 
 var routes = require('./routes/app.routes');
 
+const MongoStore = mongo(session);
+
+passportConfig.setup(passport);
 
 export class Server {
 
@@ -44,7 +51,20 @@ export class Server {
     this.app.use(bodyParser.urlencoded({ extended: false }));
     this.app.use(expressValidator());
     this.app.use(cookieParser());
+    this.app.use(session({
+      resave: true,
+      saveUninitialized: true,
+      secret: process.env.COOKIE_SECRET || '',
+      store: new MongoStore({
+        url: process.env.MONGODB_URI,
+        autoReconnect: true
+      })
+    }));
+
     this.app.use(i18n.init);
+
+    this.app.use(passport.initialize());
+    this.app.use(passport.session());
 
     this.app.use(express.static(path.join(__dirname, 'public')));
   }
