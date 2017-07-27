@@ -1,5 +1,7 @@
 ul.nav.nav-pills.nav-stacked.panel.panel-body
   li(class=(title == __('home') ? 'active' : null))
-    a(href='/') Home
+    a(href='/')=__('home')
+  li(class=(title == __('profile') ? 'active' : null))
+    a(href='/profile')=__('profile')
   li
     a(href='/logout')=__('btn.logout')

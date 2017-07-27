@@ -107,3 +107,12 @@ exports.getLogout = (req: Request, res: Response, next: NextFunction) => {
     res.redirect('/');
   });
 };
+
+exports.getProfile = (req: Request, res: Response) => {
+  let options: any = {};
+  options.title = i18n.__('profile');
+  options.user = req.user;
+
+  res.render('user/profile', options);
+};
+

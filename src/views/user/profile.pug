@@ -1,0 +1,9 @@
+extends ../internal-layout
+
+block internal-content
+  .panel.panel-default
+    .panel-heading=__('profile')
+    .panel-body 
+      ul
+        li #{__('placeholder.name')}: #{user.name}
+        li #{__('placeholder.email')}: #{user.email}
