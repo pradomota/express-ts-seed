@@ -3,6 +3,13 @@ import { Result } from 'express-validator';
 import { default as User, UserModel } from '../models/user.model';
 import * as i18n from 'i18n';
 
+exports.getLogin = (req: Request, res: Response) => {
+  let options: any = {};
+  options.title = i18n.__('login');
+
+  res.render('user/login', options);
+};
+
 exports.getSignup = (req: Request, res: Response) => {
   let options: any = {};
   options.title = i18n.__('signup');

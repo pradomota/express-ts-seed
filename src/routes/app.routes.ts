@@ -9,6 +9,7 @@ let router: Router = Router();
 router.get('/', info.getHome);
 
 // User
+router.get('/login', user.getLogin);
 router.get('/sign-up', user.getSignup);
 router.post('/sign-up', user.postSignup);
 
