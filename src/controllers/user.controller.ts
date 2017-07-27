@@ -99,3 +99,11 @@ exports.postSignup = (req: Request, res: Response, next: NextFunction) => {
     }
   });
 };
+
+exports.getLogout = (req: Request, res: Response, next: NextFunction) => {
+  req.logout();
+  req.session.destroy(function (err: Error) {
+    if (err) { return next(err); }
+    res.redirect('/');
+  });
+};
