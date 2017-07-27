@@ -5,19 +5,19 @@ block content
     div.panel-body
       form(method='post' action='')
         div.form-group(class=(errors && errors.name ? 'has-error' : ''))
-          input#name.form-control(type='text', placeholder=__('name') name='name' required='true' value=(user ? user.name : ''))
+          input#name.form-control(type='text', placeholder=__('placeholder.name') name='name' required='true' value=(user ? user.name : ''))
           if errors && errors.name
             div.help-block.with-errors=errors.name.msg
         div.form-group(class=(errors && errors.email ? 'has-error' : ''))
-          input#email.form-control(type='text', placeholder=__('email') name='email' required='true' value=(user ? user.email : ''))
+          input#email.form-control(type='text', placeholder=__('placeholder.email') name='email' required='true' value=(user ? user.email : ''))
           if errors && errors.email
             div.help-block.with-errors=errors.email.msg
         div.form-group(class=(errors && errors.password ? 'has-error' : ''))
-          input#password.form-control(type='password', placeholder=__('password') name='password' required='true')
+          input#password.form-control(type='password', placeholder=__('placeholder.password') name='password' required='true')
           if errors && errors.password
             div.help-block.with-errors=errors.password.msg
         div.form-group(class=(errors && errors.confirmPassword ? 'has-error' : ''))
-          input#confirm-password.form-control(type='password', placeholder=__('confirm_password') name='confirmPassword' required='true')
+          input#confirm-password.form-control(type='password', placeholder=__('placeholder.confirm_password') name='confirmPassword' required='true')
           if errors && errors.confirmPassword
             div.help-block.with-errors=errors.confirmPassword.msg
-        button.btn.btn-default.full-width(type='submit')=__('sign_up')
+        button.btn.btn-default.full-width(type='submit')=__('btn.sign_up')

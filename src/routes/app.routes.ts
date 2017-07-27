@@ -10,5 +10,6 @@ router.get('/', info.getHome);
 
 // User
 router.get('/sign-up', user.getSignup);
+router.post('/sign-up', user.postSignup);
 
 module.exports = router;

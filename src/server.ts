@@ -5,11 +5,20 @@ import * as bodyParser from 'body-parser';
 import * as cookieParser from 'cookie-parser';
 import * as dotenv from 'dotenv';
 import * as i18n from 'i18n';
+import * as expressValidator from 'express-validator';
+import * as mongoose from 'mongoose';
 
 dotenv.config();
 i18n.configure({
   locales: ['en'],
-  directory: path.join(__dirname, 'locales')
+  directory: path.join(__dirname, 'locales'),
+  objectNotation: true
+});
+
+mongoose.connect(process.env.MONGODB_URI, { useMongoClient: true });
+mongoose.connection.on('error', () => {
+  console.log('MongoDB connection error. Please make sure MongoDB is running.');
+  process.exit();
 });
 
 var routes = require('./routes/app.routes');
@@ -33,6 +42,7 @@ export class Server {
     this.app.use(logger('dev'));
     this.app.use(bodyParser.json());
     this.app.use(bodyParser.urlencoded({ extended: false }));
+    this.app.use(expressValidator());
     this.app.use(cookieParser());
     this.app.use(i18n.init);
 
