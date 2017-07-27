@@ -1,6 +1,6 @@
 {
   "name": "express-ts-seed",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Seed proyect for Express apps with TypeScript",
   "repository": {
     "type": "git",
